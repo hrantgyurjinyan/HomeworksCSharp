@@ -1,0 +1,120 @@
+
+public class HelloWorld
+{
+    public static void Main(string[] args)
+    {
+        Console.WriteLine("Give Knight Xcoordinate: ");
+        int userX = Convert.ToInt32(Console.ReadLine());
+
+        Console.WriteLine("Give Knight Ycoordinate: ");
+        int userY = Convert.ToInt32(Console.ReadLine());
+        Random coord = new Random();
+        int x = coord.Next(0, 7);
+        int y = coord.Next(0, 7);
+  
+        Chess chess = new Chess();
+        chess.moveKnight(userX, userY);
+        chess.moveQueen(1, x, y);
+        //chess.moveSecondQueen();
+        //chess.moveQueen(0, x, y);
+        chess.displayBoard();
+    }
+}
+class Chess
+{
+    public long[,] board = new long[8, 8];
+
+    public Chess()
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                board[i, j] = 0;
+            }
+        }
+    }
+    public void moveKnight(int x, int y) 
+    {
+        int[] dx = { 2, 1, -1, -2, -2, -1, 1, 2 };
+        int[] dy = { 1, 2, 2, 1, -1, -2, -2, -1 };
+        
+        board[x, y] = 1;
+
+
+        int newX = 0;
+        int newY = 0;
+        Random newJ = new Random();
+        for (int i = 0; i < 8; i++)
+        {
+            newX = x + dx[i];
+            newY = y + dy[i];
+
+            if (newX >= 0 && newX < 8 && newY >= 0 && newY < 8)
+            {
+                board[newX, newY] = 2;
+            }
+        }
+
+        int j = 0;
+        while (newX < 0 && newX >= 8 && newY < 0 && newY >= 8)
+        {
+            j = newJ.Next(0, 7);
+        }
+
+    }
+
+    public void moveQueen(int index, int x, int y)
+    {
+        int[] directions = { -1, 0, 1 };
+
+        foreach (int dx in directions)
+        {
+            foreach (int dy in directions)
+            {
+                int newX = x + dx;
+                int newY = y + dy;
+
+                if (dx == 0 && dy == 0)
+                {
+                    board[newX, newY] = 9;
+                    continue;
+
+                }
+
+                while (newX >= 0 && newX < 8 && newY >= 0 && newY < 8)
+                {
+                    board[newX, newY] = index;
+                    newX += dx;
+                    newY += dy;
+                }
+            }
+        }
+    }
+    public void moveSecondQueen()
+    {
+        int x, y;
+        Random coordX = new Random();
+        do
+        {
+            x = coordX.Next(0, 7);
+            y = coordX.Next(0, 7);
+        }
+        while (board[x, y] != 0);
+
+        board[x, y] = 9;
+    }
+    public void displayBoard()
+    {
+        Console.WriteLine("Chessboard with Knight's and Queen's moves:\n");
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                Console.Write(board[i, j] + " ");
+            }
+            Console.WriteLine();
+        }
+    }
+}
+
