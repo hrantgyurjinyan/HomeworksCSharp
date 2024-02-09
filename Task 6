@@ -1,0 +1,58 @@
+using System;
+
+class RandomMatrixGenerator
+{
+    static void Main()
+    {
+        //example
+        int numRows = 3; 
+        int numCols = 4;
+
+        int[,] generatedMatrix = GenerateRandomMatrix(numRows, numCols);
+
+        DisplayMatrix(generatedMatrix);
+    }
+
+    static int[,] GenerateRandomMatrix(int numRows, int numCols)
+    {
+        int[,] matrix = new int[numRows, numCols];
+        Random random = new Random();
+
+        int totalElements = numRows * numCols;
+        bool[] usedNumbers = new bool[totalElements + 1];
+
+        for (int i = 0; i < numRows; i++)
+        {
+            for (int j = 0; j < numCols; j++)
+            {
+                int randomNumber;
+                do
+                {
+                    randomNumber = random.Next(1, totalElements + 1);
+                } while (usedNumbers[randomNumber]);
+
+                matrix[i, j] = randomNumber;
+                usedNumbers[randomNumber] = true;
+            }
+        }
+
+        return matrix;
+    }
+
+    static void DisplayMatrix(int[,] matrix)
+    {
+        int numRows = matrix.GetLength(0);
+        int numCols = matrix.GetLength(1);
+
+        Console.WriteLine("Generated Matrix:");
+
+        for (int i = 0; i < numRows; i++)
+        {
+            for (int j = 0; j < numCols; j++)
+            {
+                Console.Write(matrix[i, j] + "\t");
+            }
+            Console.WriteLine();
+        }
+    }
+}
