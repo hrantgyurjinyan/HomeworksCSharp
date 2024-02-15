@@ -1,94 +1,130 @@
 using System;
 
-class KT
+class KnightTour
 {
-    static int bs = 8;
-    static int[,] cb = new int[bs, bs];
-    static int[] mr = { 2, 1, -1, -2, -2, -1, 1, 2 };
-    static int[] mc = { 1, 2, 2, 1, -1, -2, -2, -1 };
+    static int[,] chessboard = new int[8, 8];
+    static int[] moveRow = { 2, 1, -1, -2, -2, -1, 1, 2 };
+    static int[] moveCol = { 1, 2, 2, 1, -1, -2, -2, -1 };
 
-    static bool IM(int r, int c)
+    static void Main()
     {
-        return r >= 0 && r < bs && c >= 0 && c < bs && cb[r, c] == 0;
+        InitializeBoard();
+        chessboard[0, 0] = 1; 
+        KnightMove(0, 0, 2);
+
+        Console.WriteLine("Press any key to exit.");
+        Console.ReadKey();
     }
 
-    static int CM(int r, int c)
+    static void InitializeBoard()
     {
-        int ct = 0;
         for (int i = 0; i < 8; i++)
         {
-            int nr = r + mr[i];
-            int nc = c + mc[i];
-            if (IM(nr, nc))
-                ct++;
-        }
-        return ct;
-    }
-
-    static void KTH()
-    {
-        int cr = 0;
-        int cc = 0;
-        cb[cr, cc] = 1;
-
-        for (int mn = 2; mn <= bs * bs; mn++)
-        {
-            int mm = int.MaxValue;
-            int nr = -1, nc = -1;
-
-            for (int i = 0; i < 8; i++)
+            for (int j = 0; j < 8; j++)
             {
-                int tr = cr + mr[i];
-                int tc = cc + mc[i];
-
-                if (IM(tr, tc))
-                {
-                    int cm = CM(tr, tc);
-                    if (cm < mm)
-                    {
-                        mm = cm;
-                        nr = tr;
-                        nc = tc;
-                    }
-                }
+                chessboard[i, j] = 0;
             }
-
-            if (nr == -1 || nc == -1)
-            {
-                Console.WriteLine("NSF!");
-                break;
-            }
-
-            cb[nr, nc] = mn;
-            cr = nr;
-            cc = nc;
-
-            Console.WriteLine($"Move: {mn}");
-            DC();
-            Console.WriteLine();
-            Console.WriteLine("Press any key to continue to the next move...");
-            Console.ReadKey();
         }
     }
 
-    static void DC()
+    static void PrintBoard()
     {
-        for (int i = 0; i < bs; i++)
+        for (int i = 0; i < 8; i++)
         {
-            for (int j = 0; j < bs; j++)
+            for (int j = 0; j < 8; j++)
             {
-                Console.Write($"{cb[i, j],-3} ");
+                Console.Write(chessboard[i, j].ToString().PadLeft(3) + " ");
             }
             Console.WriteLine();
         }
         Console.WriteLine();
     }
 
-    static void Main()
+    static int CountAccessibleMoves(int row, int col)
     {
-        Console.WriteLine("KT with HM");
-        Console.WriteLine("IC:");
+        int count = 0;
 
-        KTH();
+        for (int i = 0; i < 8; i++)
+        {
+            int nextRow = row + moveRow[i];
+            int nextCol = col + moveCol[i];
+
+            if (IsValidMove(nextRow, nextCol) && chessboard[nextRow, nextCol] == 0)
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    static bool IsValidMove(int row, int col)
+    {
+        return row >= 0 && row < 8 && col >= 0 && col < 8;
+    }
+
+    static int CalculateHeuristic(int row, int col)
+    {
+        int heuristic = 0;
+
+        for (int i = 0; i < 8; i++)
+        {
+            int nextRow = row + moveRow[i];
+            int nextCol = col + moveCol[i];
+
+            if (IsValidMove(nextRow, nextCol) && chessboard[nextRow, nextCol] == 0)
+            {
+                heuristic++;
+            }
+        }
+
+        return heuristic;
+    }
+
+    static bool KnightMove(int row, int col, int moveNumber)
+    {
+        if (moveNumber == 65)  
+        {
+            PrintBoard();
+            return true;
+        }
+
+        int minMoveIndex = -1;
+        int minHeuristic = int.MaxValue;
+
+        for (int i = 0; i < 8; i++)
+        {
+            int nextRow = row + moveRow[i];
+            int nextCol = col + moveCol[i];
+
+            if (IsValidMove(nextRow, nextCol) && chessboard[nextRow, nextCol] == 0)
+            {
+                int heuristic = CalculateHeuristic(nextRow, nextCol);
+
+                if (heuristic < minHeuristic)
+                {
+                    minHeuristic = heuristic;
+                    minMoveIndex = i;
+                }
+            }
+        }
+
+        if (minMoveIndex != -1)
+        {
+            int nextRow = row + moveRow[minMoveIndex];
+            int nextCol = col + moveCol[minMoveIndex];
+
+            chessboard[nextRow, nextCol] = moveNumber;
+            PrintBoard(); 
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+
+            if (KnightMove(nextRow, nextCol, moveNumber + 1))
+                return true;
+            else
+                chessboard[nextRow, nextCol] = 0; 
+        }
+
+        return false;
     }
 }
