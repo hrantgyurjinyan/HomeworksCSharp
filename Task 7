@@ -1,0 +1,75 @@
+using System;
+
+class Queens
+{
+    static int boardSize = 8; 
+    static int[] queenColumns = new int[boardSize]; 
+    static char[,] chessboard = new char[boardSize, boardSize]; 
+
+    static bool IsSafe(int row, int col)
+    {
+        for (int i = 0; i < row; i++)
+        {
+            if (queenColumns[i] == col || queenColumns[i] - i == col - row || queenColumns[i] + i == col + row)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static int FindMaxFree(int row)
+    {
+        int maxFree = 0;
+        for (int col = 0; col < boardSize; col++)
+        {
+            if (IsSafe(row, col))
+            {
+                int freeCount = 0;
+                for (int i = row + 1; i < boardSize; i++)
+                {
+                    if (IsSafe(i, col))
+                        freeCount++;
+                }
+                if (freeCount > maxFree)
+                {
+                    maxFree = freeCount;
+                    queenColumns[row] = col;
+                }
+            }
+        }
+        return maxFree;
+    }
+
+    static void PrintChessboard()
+    {
+        Console.WriteLine("\nCurrent chessboard:\n");
+        for (int i = 0; i < boardSize; i++)
+        {
+            for (int j = 0; j < boardSize; j++)
+            {
+                if (chessboard[i, j] == '9')
+                    Console.Write(" 9 ");
+                else
+                    Console.Write(" - ");
+            }
+            Console.WriteLine();
+        }
+    }
+
+    static void Main()
+    {
+        Console.WriteLine("\nPress any key to continue...\n");
+
+        for (int row = 0; row < boardSize; row++)
+        {
+            int maxFree = FindMaxFree(row);
+            chessboard[row, queenColumns[row]] = '9';
+            Console.WriteLine($"Placing queen in row {row}, column {queenColumns[row]} (Max Free: {maxFree})");
+            PrintChessboard();
+
+            Console.WriteLine("Press any key to place the next...");
+            Console.ReadKey();
+        }
+    }
+}
