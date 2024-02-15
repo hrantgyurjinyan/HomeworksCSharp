@@ -1,75 +1,119 @@
 using System;
 
-class Queens
+class NQueens
 {
-    static int boardSize = 8; 
-    static int[] queenColumns = new int[boardSize]; 
-    static char[,] chessboard = new char[boardSize, boardSize]; 
-
-    static bool IsSafe(int row, int col)
-    {
-        for (int i = 0; i < row; i++)
-        {
-            if (queenColumns[i] == col || queenColumns[i] - i == col - row || queenColumns[i] + i == col + row)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    static int FindMaxFree(int row)
-    {
-        int maxFree = 0;
-        for (int col = 0; col < boardSize; col++)
-        {
-            if (IsSafe(row, col))
-            {
-                int freeCount = 0;
-                for (int i = row + 1; i < boardSize; i++)
-                {
-                    if (IsSafe(i, col))
-                        freeCount++;
-                }
-                if (freeCount > maxFree)
-                {
-                    maxFree = freeCount;
-                    queenColumns[row] = col;
-                }
-            }
-        }
-        return maxFree;
-    }
-
-    static void PrintChessboard()
-    {
-        Console.WriteLine("\nCurrent chessboard:\n");
-        for (int i = 0; i < boardSize; i++)
-        {
-            for (int j = 0; j < boardSize; j++)
-            {
-                if (chessboard[i, j] == '9')
-                    Console.Write(" 9 ");
-                else
-                    Console.Write(" - ");
-            }
-            Console.WriteLine();
-        }
-    }
+    static char[,] chessboard = new char[8, 8];
 
     static void Main()
     {
-        Console.WriteLine("\nPress any key to continue...\n");
+        InitializeBoard();
+        PlaceQueens(0);
 
-        for (int row = 0; row < boardSize; row++)
+        Console.WriteLine("Press any key to exit.");
+        Console.ReadKey();
+    }
+
+    static void InitializeBoard()
+    {
+        for (int i = 0; i < 8; i++)
         {
-            int maxFree = FindMaxFree(row);
-            chessboard[row, queenColumns[row]] = '9';
-            Console.WriteLine($"Placing queen in row {row}, column {queenColumns[row]} (Max Free: {maxFree})");
-            PrintChessboard();
-
-            Console.WriteLine("Press any key to place the next...");
-            Console.ReadKey();
+            for (int j = 0; j < 8; j++)
+            {
+                chessboard[i, j] = '.';
+            }
         }
     }
+
+    static void PrintBoard()
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                Console.Write(chessboard[i, j] + " ");
+            }
+            Console.WriteLine();
+        }
+        Console.WriteLine();
+    }
+
+    static bool IsSafe(int row, int col)
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            if (chessboard[row, i] == 'Q' || chessboard[i, col] == 'Q')
+                return false;
+        }
+
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                if ((i + j == row + col || i - j == row - col) && chessboard[i, j] == 'Q')
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    static int CountFreeSpaces(int row, int col)
+    {
+        int freeSpaces = 0;
+
+        for (int i = 0; i < 8; i++)
+        {
+            if (chessboard[row, i] == '.')
+                freeSpaces++;
+        }
+
+        for (int i = 0; i < 8; i++)
+        {
+            if (chessboard[i, col] == '.')
+                freeSpaces++;
+        }
+
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                if (i != row && j != col && Math.Abs(i - row) == Math.Abs(j - col) && chessboard[i, j] == '.')
+                    freeSpaces++;
+            }
+        }
+
+        return freeSpaces;
+    }
+
+    static bool PlaceQueens(int row)
+    {
+        if (row == 8)
+        {
+            PrintBoard();
+            return true;
+        }
+
+        for (int col = 0; col < 8; col++)
+        {
+            if (chessboard[row, col] == '.' && IsSafe(row, col))
+            {
+                chessboard[row, col] = 'Q';
+                Console.WriteLine($"Placed queen in row {row}, column {col}:");
+                PrintBoard();
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+
+                if (PlaceQueens(row + 1))
+                    return true;
+
+                chessboard[row, col] = '.';
+            }
+        }
+
+        return false;
+    }
+
+
+
+
 }
