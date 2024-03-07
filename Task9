@@ -1,0 +1,338 @@
+// REF PARAMETERS
+using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        double a, b, c;
+        Console.WriteLine("Enter coefficients for the quadratic equation ax^2 + bx + c = 0:");
+
+        Console.Write("Enter a: ");
+        a = Convert.ToDouble(Console.ReadLine());
+
+        Console.Write("Enter b: ");
+        b = Convert.ToDouble(Console.ReadLine());
+
+        Console.Write("Enter c: ");
+        c = Convert.ToDouble(Console.ReadLine());
+
+        double x1 = 0;
+        double x2 = 0;
+        if (SolveQuadratic(a, b, c, ref x1, ref x2))
+        {
+            if (double.IsNaN(x2))
+            {
+                Console.WriteLine("Root (x): " + x1);
+            }
+            else
+            {
+                Console.WriteLine("Root 1 (x1): " + x1);
+                Console.WriteLine("Root 2 (x2): " + x2);
+            }
+        }
+        else
+        {
+            Console.WriteLine("No real roots exist.");
+        }
+    }
+
+    static bool SolveQuadratic(double a, double b, double c, ref double x1, ref double x2)
+    {
+        if (a == 0)
+        {
+            if (b == 0)
+            {
+
+                x1 = 0;
+                x2 = double.NaN;
+                return true;
+            }
+            else
+            {
+
+                x1 = -c / b;
+                x2 = double.NaN;
+                return true;
+            }
+        }
+
+        double D = b * b - 4 * a * c;
+
+        if (D > 0)
+        {
+            x1 = (-b + Math.Sqrt(D)) / (2 * a);
+            x2 = (-b - Math.Sqrt(D)) / (2 * a);
+            return true;
+        }
+        else if (D == 0)
+        {
+            x1 = x2 = -b / (2 * a);
+            return true;
+        }
+        else
+        {
+
+            x1 = x2 = double.NaN;
+            return false;
+        }
+    }
+}
+
+
+
+// TUPLE PARAMETERS
+
+
+
+using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        double a, b, c;
+        Console.WriteLine("Enter coefficients for the quadratic equation ax^2 + bx + c = 0:");
+
+        Console.Write("Enter a: ");
+        a = Convert.ToDouble(Console.ReadLine());
+
+        Console.Write("Enter b: ");
+        b = Convert.ToDouble(Console.ReadLine());
+
+        Console.Write("Enter c: ");
+        c = Convert.ToDouble(Console.ReadLine());
+
+        var roots = SolveQuadratic(a, b, c);
+
+        if (roots.Item3)
+        {
+            if (double.IsNaN(roots.Item2))
+            {
+                Console.WriteLine("Root (x): " + roots.Item1);
+            }
+            else
+            {
+                Console.WriteLine("Root 1 (x1): " + roots.Item1);
+                Console.WriteLine("Root 2 (x2): " + roots.Item2);
+            }
+        }
+        else
+        {
+            Console.WriteLine("No real roots exist.");
+        }
+    }
+
+    static (double, double, bool) SolveQuadratic(double a, double b, double c)
+    {
+        if (a == 0)
+        {
+            if (b == 0)
+            {
+
+                return (0, double.NaN, true);
+            }
+            else
+            {
+
+                double x1 = -c / b;
+                return (x1, double.NaN, true);
+            }
+        }
+
+        double D = b * b - 4 * a * c;
+
+        if (D > 0)
+        {
+            double x1 = (-b + Math.Sqrt(D)) / (2 * a);
+            double x2 = (-b - Math.Sqrt(D)) / (2 * a);
+            return (x1, x2, true);
+        }
+        else if (D == 0)
+        {
+            double x1 = -b / (2 * a);
+            return (x1, x1, true);
+        }
+        else
+        {
+            return (double.NaN, double.NaN, false);
+        }
+    }
+}
+
+
+
+// ARRAY PARAMETERS
+
+
+
+using System;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        double a, b, c;
+        Console.WriteLine("Enter coefficients for the quadratic equation ax^2 + bx + c = 0:");
+
+        Console.Write("Enter a: ");
+        a = Convert.ToDouble(Console.ReadLine());
+
+        Console.Write("Enter b: ");
+        b = Convert.ToDouble(Console.ReadLine());
+
+        Console.Write("Enter c: ");
+        c = Convert.ToDouble(Console.ReadLine());
+
+        double[] roots = SolveQuadratic(a, b, c);
+
+        if (roots[2] > 0)
+        {
+            if (roots[2] == 1)
+            {
+                Console.WriteLine("Root (x): " + roots[0]);
+            }
+            else
+            {
+                Console.WriteLine("Root 1 (x1): " + roots[0]);
+                Console.WriteLine("Root 2 (x2): " + roots[1]);
+            }
+        }
+        else
+        {
+            Console.WriteLine("No real roots exist.");
+        }
+    }
+
+    static double[] SolveQuadratic(double a, double b, double c)
+    {
+        double[] result = new double[3];
+
+        double D = b * b - 4 * a * c;
+
+        if (D > 0)
+        {
+            result[0] = (-b + Math.Sqrt(D)) / (2 * a);
+            result[1] = (-b - Math.Sqrt(D)) / (2 * a);
+            result[2] = 2;
+        }
+        else if (D == 0)
+        {
+            result[0] = -b / (2 * a);
+            result[1] = result[0];
+            result[2] = 1;
+        }
+        else
+        {
+            result[0] = double.NaN;
+            result[1] = double.NaN;
+            result[2] = 0;
+        }
+
+        return result;
+    }
+}
+
+
+
+
+// DECONSTRUCT PARAMETERS
+
+
+
+
+using System;
+
+class QuadraticEquation
+{
+    public double A { get; }
+    public double B { get; }
+    public double C { get; }
+
+    public QuadraticEquation(double a, double b, double c)
+    {
+        A = a;
+        B = b;
+        C = c;
+    }
+
+    public Roots Solve()
+    {
+        double discriminant = B * B - 4 * A * C;
+
+        if (discriminant > 0)
+        {
+            double x1 = (-B + Math.Sqrt(discriminant)) / (2 * A);
+            double x2 = (-B - Math.Sqrt(discriminant)) / (2 * A);
+            return new Roots(x1, x2, 2); 
+        }
+        else if (discriminant == 0)
+        {
+            double x = -B / (2 * A);
+            return new Roots(x, x, 1); 
+        }
+        else
+        {
+            return new Roots(double.NaN, double.NaN, 0); 
+        }
+    }
+}
+
+class Roots
+{
+    public double X1 { get; }
+    public double X2 { get; }
+    public int Count { get; }
+
+    public Roots(double x1, double x2, int count)
+    {
+        X1 = x1;
+        X2 = x2;
+        Count = count;
+    }
+
+    public void Deconstruct(out double x1, out double x2, out int count)
+    {
+        x1 = X1;
+        x2 = X2;
+        count = Count;
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        double a, b, c;
+        Console.WriteLine("Enter coefficients for the quadratic equation ax^2 + bx + c = 0:");
+
+        Console.Write("Enter a: ");
+        a = Convert.ToDouble(Console.ReadLine());
+
+        Console.Write("Enter b: ");
+        b = Convert.ToDouble(Console.ReadLine());
+
+        Console.Write("Enter c: ");
+        c = Convert.ToDouble(Console.ReadLine());
+
+        QuadraticEquation equation = new QuadraticEquation(a, b, c);
+        var roots = equation.Solve();
+
+        if (roots.Count > 0)
+        {
+            if (roots.Count == 1)
+            {
+                Console.WriteLine($"Root (x): {roots.X1}");
+            }
+            else
+            {
+                Console.WriteLine($"Root 1 (x1): {roots.X1}");
+                Console.WriteLine($"Root 2 (x2): {roots.X2}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("No real roots exist.");
+        }
+    }
+}
